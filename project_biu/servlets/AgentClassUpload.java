@@ -1,0 +1,116 @@
+package project_biu.servlets;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.reflect.Modifier;
+import java.nio.charset.StandardCharsets;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Arrays;
+
+import project_biu.graph.Agent;
+import project_biu.server.RequestParser.RequestInfo;
+
+/**
+ * The ConfLoader class is responsible for handling HTTP requests to load configuration files.
+ * It processes incoming requests to upload and validate configuration files, and generates
+ * an HTML response displaying the graph created from the configuration.
+ */
+public class AgentClassUpload implements Servlet {
+
+    /**
+     * Handles an HTTP request to load a configuration file and generate a graph.
+     *
+     * @param ri The RequestInfo object containing details about the incoming request.
+     * @param toClient The OutputStream to which the response should be written.
+     * @throws IOException If an I/O error occurs during request handling.
+     */
+    @Override
+    public void handle(RequestInfo ri, OutputStream toClient) throws IOException {
+        try{
+            if ("POST".equalsIgnoreCase(ri.getHttpCommand())) {   
+                
+                
+                
+                // Validate and save the configuration file
+                String classFilePath = "project_biu/configs/" + ri.getParameters().get("filename");
+                File configsDir = new File("project_biu/configs");
+
+                // Check if the file name already exists in the configs directory.
+                if (configsDir.exists() && configsDir.isDirectory()) {
+                    String[] existingFiles = configsDir.list();
+                    if (existingFiles != null && Arrays.asList(existingFiles).contains(ri.getParameters().get("filename"))) {
+                        String errorMessage = "Class name is reserved. Please change the class name and try again.";
+                        toClient.write(errorMessage.getBytes(StandardCharsets.UTF_8));
+                        toClient.flush();
+                        return;
+                    }
+                }
+                // Ensure the file is a .java file
+                if (!classFilePath.endsWith(".java")) {
+                    String errorMessage = "Invalid file type. Only .conf files are allowed.";
+                    toClient.write(errorMessage.getBytes(StandardCharsets.UTF_8));
+                    toClient.flush();
+                    return;
+                }
+                // save the uploaded file. if an error occurs, send an error message to the client.
+                try (FileOutputStream fos = new FileOutputStream(classFilePath)) {
+                    fos.write(ri.getContent());
+                }
+                catch(Exception e) {
+                    String errorMessage = "Error saving file: " + e.getMessage();
+                    toClient.write(errorMessage.getBytes(StandardCharsets.UTF_8));
+                    toClient.flush();
+                    return;
+                }
+
+                // Check if the uploaded class implements the Agent interface
+                try {
+                    String className = classFilePath.replace(".java", "").replace("project_biu/configs/", "project_biu.configs.");
+                    Class<?> clazz = Class.forName(className);
+
+                    if (!Agent.class.isAssignableFrom(clazz) || Modifier.isAbstract(clazz.getModifiers())) {
+                        String errorMessage = "Uploaded class does not implement the Agent interface or is abstract.";
+                        toClient.write(errorMessage.getBytes(StandardCharsets.UTF_8));
+                        toClient.flush();
+                        removeFile(classFilePath);
+                        return;
+                    }
+                    // Load the ensure the class is valid
+                } catch (ClassNotFoundException e) {
+                    String errorMessage = "Error loading class: " + e.getMessage();
+                    toClient.write(errorMessage.getBytes(StandardCharsets.UTF_8));
+                    toClient.flush();
+                    removeFile(classFilePath);
+                    return;
+                }
+                // If the class is valid, add it to the configs directory and send a success message to the client.
+                String successMessage = "Upload successful - you can now use "+ ri.getParameters().get("filename").replace(".java", "") + " agent in your graph.";
+                toClient.write(successMessage.getBytes(StandardCharsets.UTF_8));
+                toClient.flush();
+            }
+        } catch (IOException e) {
+            String errorMessage = "Error - check file and try again: " + e.getMessage();
+            toClient.write(errorMessage.getBytes(StandardCharsets.UTF_8));
+            toClient.flush();
+            return;
+        }
+    }
+
+    private void removeFile(String classFilePath) {
+        File uploadedFile = new File(classFilePath);
+            if (uploadedFile.exists()) {
+                uploadedFile.delete();
+            }
+    }
+    
+    /**
+     * Closes any resources associated with the servlet.
+     *
+     * @throws IOException If an I/O error occurs during resource cleanup.
+     */
+    @Override
+    public void close() throws IOException {
+        // nothing to close
+    }
+}

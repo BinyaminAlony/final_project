@@ -95,9 +95,9 @@ public class RequestParser {
 		    // Read content until EOF or Content-Length
 		    StringBuilder contentBuilder = new StringBuilder();
 		    while ((line = reader.readLine()) != null && !line.equals(boundary) && contentLengthLeft > 0) {
-		        if (line.isEmpty()) {
-		            break; // Stop reading content if we encounter a blank line
-		        }
+		        // if (line.isEmpty()) {
+		        //     break; // Stop reading content if we encounter a blank line
+		        // }
 		        contentBuilder.append(line).append('\n');
 		        contentLengthLeft -= 1;
 		    }

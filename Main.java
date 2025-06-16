@@ -8,6 +8,7 @@ import java.util.Map;
 
 import project_biu.server.MyHTTPServer;
 import project_biu.server.RequestParser;
+import project_biu.servlets.AgentClassUpload;
 // import project_biu.servlets.AddNodeFormDisplayer;
 // import project_biu.servlets.AddNodeToGraph;
 import project_biu.servlets.ConfLoader;
@@ -24,6 +25,7 @@ public class Main { // RequestParser
 		server.addServlet("GET", "/app", new HtmlLoader("html_files"));
 		server.addServlet("POST", "/upload", new ConfLoader());
 		server.addServlet("GET", "/publish", new TopicDisplayer());
+		server.addServlet("POST", "/uploadAgent", new AgentClassUpload());
 
 		// server.addServlet("GET", "/addNodeForm", new AddNodeFormDisplayer());
 		// server.addServlet("GET", "/addNode", new AddNodeToGraph());

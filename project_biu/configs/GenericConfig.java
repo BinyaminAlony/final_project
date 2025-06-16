@@ -29,7 +29,8 @@ public class GenericConfig implements Config{
 //		if (confFile != null && !confFile.isEmpty())
 		    try {
 		    	List<String> lines = java.nio.file.Files.readAllLines(java.nio.file.Paths.get(confFile));
-	
+				lines.removeIf(String::isEmpty); // Remove empty lines
+				
 		        if (lines.size() % 3 != 0) {
 //		            throw new IllegalArgumentException("Invalid config: number of lines must be a multiple of 3");
 		        	System.out.println("file doesnt match format (rows arent in triplets");
