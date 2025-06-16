@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computational Graph Viewer</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            height: 100vh;
+        }
+        iframe {
+            border: none;
+        }
+        .form {
+            flex: 1;
+            max-width: 25%;
+        }
+        .graph {
+            flex: 2;
+            max-width: 50%;
+        }
+        .temp {
+            flex: 1;
+            max-width: 25%;
+        }
+    </style>
+</head>
+<body>
+    <iframe name = formFrame class="form" src="./form.html"></iframe>
+    <iframe name = graphFrame  class="graph" src="./graph.html"></iframe>
+    <iframe name = outputFrame  class="temp" src="./temp.html"></iframe>
+</body>
+</html>
