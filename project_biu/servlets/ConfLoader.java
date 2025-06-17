@@ -52,6 +52,8 @@ public class ConfLoader implements Servlet {
                     String errorMessage = buildStyledErrorHtml("Error Loading Configuration", e.getMessage());
                     toClient.write(errorMessage.getBytes(StandardCharsets.UTF_8));
                     toClient.flush();
+                    // Clear topics if configuration loading fails
+                    TopicManagerSingleton.get().clear();
                     return;
                 }
                 // Create the graph

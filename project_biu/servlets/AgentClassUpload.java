@@ -12,14 +12,14 @@ import project_biu.graph.Agent;
 import project_biu.server.RequestParser.RequestInfo;
 
 /**
- * The ConfLoader class is responsible for handling HTTP requests to load configuration files.
- * It processes incoming requests to upload and validate configuration files, and generates
- * an HTML response displaying the graph created from the configuration.
+ * The AgentClassUpload class is responsible for handling HTTP requests to upload java files for agent classes.
+ * It processes incoming requests to upload and validate the java file, 
+ * and puts it in the .config directory, to be used in configs by the user.
  */
 public class AgentClassUpload implements Servlet {
 
     /**
-     * Handles an HTTP request to load a configuration file and generate a graph.
+     * Handles an HTTP request to load an Agent class file.
      *
      * @param ri The RequestInfo object containing details about the incoming request.
      * @param toClient The OutputStream to which the response should be written.

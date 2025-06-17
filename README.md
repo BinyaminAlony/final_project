@@ -81,3 +81,6 @@ public class MyAgent implements Agent {
 - Binyamin Alony
 For questions or support, contact:
 - binyamin.alony@biu.ac.il
+
+## Documentation
+- JavaDoc is available in the [doc](doc/index.html) folder. Open `doc/index.html` in your browser to view the full API documentation.
