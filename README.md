@@ -76,6 +76,52 @@ public class MyAgent implements Agent {
 }
 ```
 
+## API & Extending the Server
+
+### HTTP API Endpoints
+
+- **POST /upload**
+  - Uploads a configuration file.
+  - Form field: `configFile` (.conf)
+- **POST /uploadAgent**
+  - Uploads a Java agent class.
+  - Form field: `agentFile` (.java)
+- **GET /publish**
+  - Publishes a message to a topic.
+  - Query parameters: `topic`, `message`
+
+### Adding a New Servlet
+
+To add a new HTTP endpoint (servlet) to the server:
+
+1. **Create a Servlet Class**
+   - Implement the `Servlet` interface (see `project_biu/servlets/Servlet.java`).
+   - Example:
+     ```java
+     package project_biu.servlets;
+     import project_biu.server.RequestParser.RequestInfo;
+     import java.io.OutputStream;
+     import java.io.IOException;
+
+     public class MyNewServlet implements Servlet {
+         @Override
+         public void handle(RequestInfo ri, OutputStream toClient) throws IOException {
+             // Your logic here
+         }
+         @Override
+         public void close() throws IOException {}
+     }
+     ```
+
+2. **Register the Servlet in Main.java**
+   - In your `Main.java`, add your servlet to the server with a URL path:
+     ```java
+     server.addMapping("/myNewEndpoint", new MyNewServlet());
+     ```
+   - Now, HTTP requests to `/myNewEndpoint` will be handled by your servlet.
+
+3. **Restart the Server**
+   - Rebuild and restart your server to apply the changes.
 
 ## Authors & Contact:
 - Binyamin Alony
