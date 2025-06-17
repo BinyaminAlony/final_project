@@ -64,24 +64,48 @@ public class AgentClassUpload implements Servlet {
                     return;
                 }
 
-                // Check if the uploaded class implements the Agent interface
+                // Compile the .java file before loading the class
                 try {
-                    String className = classFilePath.replace(".java", "").replace("project_biu/configs/", "project_biu.configs.");
-                    Class<?> clazz = Class.forName(className);
-
-                    if (!Agent.class.isAssignableFrom(clazz) || Modifier.isAbstract(clazz.getModifiers())) {
-                        String errorMessage = "Uploaded class does not implement the Agent interface or is abstract.";
+                    Process compileProcess = Runtime.getRuntime().exec(
+                        "javac " + classFilePath
+                    );
+                    int compileResult = compileProcess.waitFor();
+                    if (compileResult != 0) {
+                        String errorMessage = "Compilation failed. Please check your code.";
                         toClient.write(errorMessage.getBytes(StandardCharsets.UTF_8));
                         toClient.flush();
                         removeFile(classFilePath);
                         return;
                     }
-                    // Load the ensure the class is valid
+                } catch (Exception e) {
+                    String errorMessage = "Error during compilation: " + e.getMessage();
+                    toClient.write(errorMessage.getBytes(StandardCharsets.UTF_8));
+                    toClient.flush();
+                    removeFile(classFilePath);
+                    return;
+                }
+
+                // Now check if the uploaded class implements the Agent interface
+                try {
+                    String className = classFilePath.replace(".java", "").replace("project_biu/configs/", "project_biu.configs.");
+                    Class<?> clazz = Class.forName(className);
+                    if (!Agent.class.isAssignableFrom(clazz) || Modifier.isAbstract(clazz.getModifiers())) {
+                        String errorMessage = "Uploaded class does not implement the Agent interface or is abstract.";
+                        toClient.write(errorMessage.getBytes(StandardCharsets.UTF_8));
+                        toClient.flush();
+                        removeFile(classFilePath);
+                        // Also remove the .class file
+                        File classFile = new File(classFilePath.replace(".java", ".class"));
+                        if (classFile.exists()) classFile.delete();
+                        return;
+                    }
                 } catch (ClassNotFoundException e) {
                     String errorMessage = "Error loading class: " + e.getMessage();
                     toClient.write(errorMessage.getBytes(StandardCharsets.UTF_8));
                     toClient.flush();
                     removeFile(classFilePath);
+                    File classFile = new File(classFilePath.replace(".java", ".class"));
+                    if (classFile.exists()) classFile.delete();
                     return;
                 }
                 // If the class is valid, add it to the configs directory and send a success message to the client.

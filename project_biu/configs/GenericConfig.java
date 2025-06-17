@@ -29,7 +29,7 @@ public class GenericConfig implements Config{
 //		if (confFile != null && !confFile.isEmpty())
 		    try {
 		    	List<String> lines = java.nio.file.Files.readAllLines(java.nio.file.Paths.get(confFile));
-				lines.removeIf(String::isEmpty); // Remove empty lines
+				lines.removeIf(line -> line.isEmpty() || line.trim().startsWith("#")); // Remove empty lines and comments
 				
 		        if (lines.size() % 3 != 0) {
 //		            throw new IllegalArgumentException("Invalid config: number of lines must be a multiple of 3");
@@ -59,7 +59,9 @@ public class GenericConfig implements Config{
 		            agents.add(parallelAgent);
 		        }
 	
-		    } catch (Exception e) {
+		    } catch (ClassNotFoundException e) {
+		        throw new RuntimeException("Agent class not found: " + e.getMessage() + "\nupload Agent class file and try again", e);
+			}catch (Exception e) {
 		        throw new RuntimeException("Error reading config file: " + e.toString(), e);
 		    }
 	}

@@ -34,7 +34,14 @@ public class Graph extends ArrayList<Node> {
 		TopicManagerSingleton.TopicManager tm = TopicManagerSingleton.get();
 		for (Topic topic : tm.getTopics()) {
 			// create a node for the topic
-			Node topicNode = this.topics.computeIfAbsent(topic.name, name -> new Node("T" + name));
+			Node topicNode;
+			if (topic.getPubs().isEmpty()){				
+				topicNode = this.topics.computeIfAbsent(topic.name, name -> new Node("T" + "Input:" + name));
+			}else if (topic.getSubs().isEmpty()){				
+				topicNode = this.topics.computeIfAbsent(topic.name, name -> new Node("T" + "Output:" + name));
+			}else{
+				topicNode = this.topics.computeIfAbsent(topic.name, name -> new Node("T" + name));
+			}
 			
 			// for each sub, get the relevant node and add the edge from the topic to the sub
 			for (Agent agent : topic.getSubs()) {

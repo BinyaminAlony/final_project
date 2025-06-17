@@ -129,4 +129,5 @@ For questions or support, contact:
 - binyamin.alony@biu.ac.il
 
 ## Documentation
+- [Watch the demo on YouTube](https://www.youtube.com/watch?v=epoeeHTeOoo)
 - JavaDoc is available in the [doc](doc/index.html) folder. Open `doc/index.html` in your browser to view the full API documentation.
