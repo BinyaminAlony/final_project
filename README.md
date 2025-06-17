@@ -8,19 +8,11 @@ This project is a configurable, agent-driven graph computation system with a web
 - **Agent System:** Extend the system by uploading Java agent classes implementing the `Agent` interface.
 - **Parallel and Custom Agents:** Support for parallel agent execution and custom logic.
 - **HTTP Server & Servlets:** Custom server and servlets for file uploads, configuration, and graph visualization.
-- **Web UI:** Upload configuration files, agent classes, and publish messages via a styled HTML interface.
-- **Dynamic Class Validation:** Ensures uploaded agent classes implement the required interface and are not abstract.
+- **Web UI:** Upload configuration files, agent classes, and publish messages via a styled HTML interface
 
-## Directory Structure
-```
-project_biu/
-  configs/      # Configuration and agent class files
-  graph/        # Core graph logic (nodes, agents, messages, etc.)
-  server/       # HTTP server and request parsing
-  servlets/     # Servlets for HTTP requests (uploads, HTML, etc.)
-  views/        # HTML graph viewer and UI logic
-html_files/     # Web UI files (form.html, etc.)
-```
+## Documentation
+- [Watch the demo on YouTube](https://www.youtube.com/watch?v=epoeeHTeOoo)
+- Full JavaDoc is available in the [doc](doc/index.html) folder. Open `doc/index.html` in your browser to view the full API documentation.
 
 ## Getting Started
 1. **Build the Project:**
@@ -34,9 +26,9 @@ html_files/     # Web UI files (form.html, etc.)
    - Uploaded agent classes must implement `project_biu.graph.Agent` and not be abstract.
 
 ## Usage
-- **Upload Configuration:** Deploy a `.conf` file to define your graph.
-- **Upload Agent Class:** Upload a `.java` file for a new agent. The system checks for interface compliance and name conflicts.
-- **Publish to Topic:** Send messages to graph topics via the web UI.
+- **Upload Configuration:** Deploy a `.conf` file to define your graph. Nodes are named automatically.
+- **Upload Agent Class:** if Neccesary, upload a `.java` file for a new agent. The system checks for interface compliance and name conflicts.
+- **Publish to Topic:** Send messages to topics via the web UI.
 
 ## File Formats
 
@@ -75,53 +67,22 @@ public class MyAgent implements Agent {
     // implement Agent methods
 }
 ```
-## Documentation
-- [Watch the demo on YouTube](https://www.youtube.com/watch?v=epoeeHTeOoo)
-- JavaDoc is available in the [doc](doc/index.html) folder. Open `doc/index.html` in your browser to view the full API documentation.
 
-## API & Extending the Server
-
-### HTTP API Endpoints
-
-- **POST /upload**
-  - Uploads a configuration file.
-  - Form field: `configFile` (.conf)
-- **POST /uploadAgent**
-  - Uploads a Java agent class.
-  - Form field: `agentFile` (.java)
-- **GET /publish**
-  - Publishes a message to a topic.
-  - Query parameters: `topic`, `message`
+## API & Creating your own server
 
 ### Adding a New Servlet
 
-To add a new HTTP endpoint (servlet) to the server:
+To add a new HTTP servlet to the server:
 
 1. **Create a Servlet Class**
    - Implement the `Servlet` interface (see `project_biu/servlets/Servlet.java`).
-   - Example:
-     ```java
-     package project_biu.servlets;
-     import project_biu.server.RequestParser.RequestInfo;
-     import java.io.OutputStream;
-     import java.io.IOException;
-
-     public class MyNewServlet implements Servlet {
-         @Override
-         public void handle(RequestInfo ri, OutputStream toClient) throws IOException {
-             // Your logic here
-         }
-         @Override
-         public void close() throws IOException {}
-     }
-     ```
 
 2. **Register the Servlet in Main.java**
    - In your `Main.java`, add your servlet to the server with a URL path:
      ```java
-     server.addMapping("/myNewEndpoint", new MyNewServlet());
+     server.addMapping("/myNewServlet", new MyNewServlet());
      ```
-   - Now, HTTP requests to `/myNewEndpoint` will be handled by your servlet.
+   - Now, HTTP requests to `/myNewServlet` will be handled by your servlet.
 
 3. **Restart the Server**
    - Rebuild and restart your server to apply the changes.
@@ -129,4 +90,4 @@ To add a new HTTP endpoint (servlet) to the server:
 ## Authors & Contact:
 - Binyamin Alony
 For questions or support, contact:
-- binyamin.alony@biu.ac.il
+- binyaminalony1@gmail.com
